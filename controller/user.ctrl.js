@@ -12,9 +12,9 @@ const getLogin = (req, res) => {
 }
 
 const postLogin = (req, res, next) => {
-  console.log('PostLogin');
+  console.log('In PostLogin');
   passport.authenticate('local', (err, user, info) => {
-    console.log('postLoginPassport');
+    console.log('In PostLogin > passport.authenticate');
     if (err)  {
       console.error(err);
       return next(err);
@@ -23,7 +23,7 @@ const postLogin = (req, res, next) => {
       return res.status(401).send(info.reason);
     }
     return req.login(user, async (loginError) => {
-      console.log('PostLogin Req Login');
+      console.log('In PostLogin > passport.authenticate > PostLogin Req Login');
       if (loginError) {
         console.error(loginError);
         return next(loginError);

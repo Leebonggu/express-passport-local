@@ -184,6 +184,51 @@ router.get('/logout', isAuthenticated, getLogout);
 module.exports = router;
 ```
 
+## 미들웨어 확장
+
+ - 미들웨어를 확장하지 않고 사용하면, passport내에서 request, response를 사용할수 없다.
+ - 따라서 미들웨어 확장을 통해 passport내에서 request, response를 사용하기 위함
+
+ ```js
+//  예시
+const morgan = require('morgan');
+
+// 일반 사용 시 - dev : 개발모드
+app.use(morgan('dev'));
+
+// 미들웨어 확장법 1
+app.use((req, res, next) => {
+  morgan('dev')(req, res, next);
+});
+ ```
+
+```js
+//  적용
+const postLogin = (req, res, next) => {
+  console.log('PostLogin');
+  passport.authenticate('local', (err, user, info) => {
+    console.log('postLoginPassport');
+    if (err)  {
+      console.error(err);
+      return next(err);
+    }
+    if (info) {
+      return res.status(401).send(info.reason);
+    }
+    return req.login(user, async (loginError) => {
+      console.log('PostLogin Req Login');
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      }
+      return res.status(200).send(user);
+    })
+  })(req, res, next);
+};
+```
+
+## 로그인요청부터 완료될떄까지 순서
+![순서](/images/sequence.png)
 ## 출처
 
 - [passport-local](http://www.passportjs.org/packages/passport-local/)
@@ -192,3 +237,4 @@ module.exports = router;
 - [Passort 로그인(미들웨어 확장)](https://velog.io/@0viii0viii/Passport-JS)
 - [인증(Authentication)과 인가(Authorization)의 차이](https://velog.io/@taeha7b/authentication-jwt-bcrypt-authorization)
 - [Node.js passport](https://medium.com/@vdongbin/node-js-passport-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-33e2eab2389b)
+- [미들웨어 확장](https://velog.io/@xka926/express-%EB%AF%B8%EB%93%A4%EC%9B%A8%EC%96%B4#%EB%AF%B8%EB%93%A4%EC%9B%A8%EC%96%B4-%ED%99%95%EC%9E%A5%EB%B2%95)

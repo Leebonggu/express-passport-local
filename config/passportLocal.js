@@ -12,7 +12,7 @@ const PassportLocal = async () => {
     },
       function(username, password, done) {
         // db;
-        console.log(username, password)
+        console.log('In LocalStrategy');
         const [user] = db.filter(u => u.email === username);
         if (!user) {
           return done(null, false, { message: '유저가 없습니다.'});
@@ -20,7 +20,6 @@ const PassportLocal = async () => {
         if (!passwordVerify(password, user.password,)) {
           return done(null, false, { message: '비밀번호가 틀렸습니다.'});
         }
-        console.log('passport Local');
         return done(null, user);
       }
     ));
