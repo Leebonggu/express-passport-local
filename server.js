@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const sessoin = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
-const passportConfig = require('./config/passport');
+const passportConfig = require('./config');
 
 const api = require('./routes');
 const app = express();
@@ -26,6 +26,10 @@ app.use(sessoin({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.get('/', (req, res) => {
+  return res.send('Home');
+});
 
 app.use('/api', api);
 
